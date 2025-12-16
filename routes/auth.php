@@ -1,22 +1,28 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\QuoteController;
-use App\Http\Controllers\LikedQuoteController;
+use App\Http\Controllers\Auth\AuthController;
 
 /*
 |--------------------------------------------------------------------------
-| Guest Routes
+| Authentication Routes
 |--------------------------------------------------------------------------
 */
 
 Route::middleware('guest')->group(function () {
-    Route::get('/login', [AuthController::class, 'create'])->name('login');
+
+    // Login
+    Route::get('/', [AuthController::class, 'create'])
+        ->name('login');
+
     Route::post('/login', [AuthController::class, 'store']);
 
-    Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+    // Register (Sign Up)
+    Route::get('/', [AuthController::class, 'showRegister'])
+        ->name('register');
+
     Route::post('/register', [AuthController::class, 'register']);
+
 });
 
 /*
@@ -26,10 +32,9 @@ Route::middleware('guest')->group(function () {
 */
 
 Route::middleware('auth')->group(function () {
-    Route::post('/logout', [AuthController::class, 'destroy'])->name('logout');
 
-    Route::get('/home', [QuoteController::class, 'index']);
+    // Logout
+    Route::post('/', [AuthController::class, 'destroy'])
+        ->name('logout');
 
-    Route::post('/like', [LikedQuoteController::class, 'store']);
-    Route::delete('/like/{likedQuote}', [LikedQuoteController::class, 'destroy']);
 });

@@ -22,12 +22,12 @@ class LikedQuoteController extends Controller
 
     public function destroy(LikedQuote $likedQuote)
     {
-        // Authorization safety check
         if ($likedQuote->user_id !== auth()->id()) {
             abort(403);
         }
 
         $likedQuote->delete();
+
         return back();
     }
 }

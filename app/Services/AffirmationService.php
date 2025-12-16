@@ -13,7 +13,7 @@ class AffirmationService
             $response = Http::get('https://www.affirmations.dev/');
 
             if ($response->failed()) {
-                return "You are enough.";
+                return 'You are enough.';
             }
 
             return $response->json('affirmation');

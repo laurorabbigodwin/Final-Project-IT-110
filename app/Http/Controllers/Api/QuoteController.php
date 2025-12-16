@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Api\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Services\AffirmationService;
 use Inertia\Inertia;
 
