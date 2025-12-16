@@ -1,82 +1,97 @@
-import { router, usePage } from "@inertiajs/react";
+import { usePage, router } from "@inertiajs/react"
 
-export default function Home({ quote, likedQuotes }) {
-  const { auth } = usePage().props;
-
-  const likeQuote = () => {
-    if (!auth.user) {
-      alert("Please sign in to like quotes.");
-      return;
-    }
-
-    router.post("/like", { quote });
-  };
+export default function Home({ quote }) {
+  const { auth } = usePage().props
+  const user = auth?.user
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2] px-6 py-8">
+    <div className="min-h-screen bg-[#FAF7F2] text-purple-600">
 
-      <header className="flex justify-between items-center">
-        <h1 className="text-xl font-semibold text-purple-400">
-          inspirely
-        </h1>
-
-        {auth.user && (
-          <span className="text-sm text-gray-600">
-            {auth.user.username}
-          </span>
-        )}
+      {/* Header */}
+      <header className="flex justify-between items-center px-8 py-6">
+        <div className="font-semibold tracking-wide">inspirely</div>
+        <div className="text-sm">{user ? user.username : "Guest"}</div>
       </header>
 
+      {/* Hero */}
       <section className="text-center mt-10">
-        <h2 className="text-4xl font-light text-purple-300 tracking-wide">
-          INSPIRELY
-        </h2>
-        <p className="italic text-gray-400">
-          Small words, big impact.
+        <h1 className="text-6xl font-light tracking-widest">INSPIRELY</h1>
+        <p className="italic text-purple-400 mt-2">
+          Small words, big impact
         </p>
       </section>
 
-      <div className="mt-10 bg-purple-100 h-48 rounded-xl shadow flex items-center justify-center text-center px-6">
-        <p className="text-lg italic text-purple-700">
-          “{quote}”
-        </p>
-      </div>
-
-      <div className="flex justify-center gap-4 mt-4 text-sm text-gray-600">
-        <button onClick={() => location.reload()}>New Quote</button>
-        <button onClick={likeQuote}>Like</button>
-        <button onClick={() => navigator.clipboard.writeText(quote)}>
-          Copy
-        </button>
-      </div>
-
-      <section className="mt-14">
-        <h3 className="text-center text-purple-300 text-xl">
-          Liked
-        </h3>
-
-        {likedQuotes.length === 0 && (
-          <p className="text-center text-sm text-gray-400 mt-4">
-            No liked quotes yet.
+      {/* Quote Card */}
+      <section className="flex justify-center mt-16 px-6">
+        <div className="w-full max-w-xl bg-purple-100 rounded-2xl shadow-md p-12 text-center">
+          <p className="text-xl leading-relaxed">
+            {quote}
           </p>
-        )}
 
-        {likedQuotes.map(item => (
-          <div
-            key={item.id}
-            className="bg-purple-100 rounded-lg p-4 mt-4 flex justify-between"
-          >
-            <p>{item.quote}</p>
-
+          <div className="flex justify-center gap-4 mt-8 flex-wrap">
             <button
-              className="text-red-400"
-              onClick={() => router.delete(`/like/${item.id}`)}
+              onClick={() => router.reload({ only: ["quote"] })}
+              className="px-4 py-2 border rounded-full text-sm hover:bg-purple-200"
             >
-              ✕
+              New Quote
+            </button>
+            <button className="px-4 py-2 border rounded-full text-sm">
+              Like
+            </button>
+            <button className="px-4 py-2 border rounded-full text-sm">
+              Copy
+            </button>
+            <button className="px-4 py-2 border rounded-full text-sm">
+              Share
             </button>
           </div>
-        ))}
+        </div>
       </section>
+
+      {/* Liked Section */}
+      <section className="mt-20 text-center">
+        <h2 className="text-3xl font-light mb-6">Liked</h2>
+        <div className="mx-auto w-full max-w-xl bg-purple-100 rounded-2xl h-40"></div>
+      </section>
+
+      {/* About */}
+      <section className="mt-24 px-8 max-w-3xl mx-auto text-center">
+        <h2 className="text-3xl font-light mb-4">ABOUT US</h2>
+        <p className="text-sm text-gray-600 leading-relaxed">
+          Inspirely is your daily companion for inspiration and motivation.
+          We curate the most powerful quotes from history’s greatest minds
+          to help you stay motivated, focused, and inspired throughout your journey.
+        </p>
+      </section>
+
+      {/* Auth */}
+      {!user && (
+        <section className="mt-20 flex justify-center px-6 pb-20">
+          <div className="bg-white rounded-2xl shadow-md p-8 w-full max-w-sm text-center">
+            <h3 className="mb-4 font-medium">Welcome Back</h3>
+            <p className="text-sm mb-6">Sign in to unlock features</p>
+
+            <input
+              className="w-full border rounded px-3 py-2 mb-3 text-sm"
+              placeholder="Username"
+            />
+            <input
+              className="w-full border rounded px-3 py-2 mb-4 text-sm"
+              placeholder="Password"
+              type="password"
+            />
+
+            <button className="w-full bg-purple-500 text-white py-2 rounded">
+              Sign in
+            </button>
+
+            <p className="text-xs mt-4">
+              Don’t have an account? <span className="underline">Sign up</span>
+            </p>
+          </div>
+        </section>
+      )}
+
     </div>
-  );
+  )
 }

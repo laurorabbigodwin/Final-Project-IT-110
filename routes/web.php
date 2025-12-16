@@ -1,35 +1,48 @@
 <?php
 
+use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\QuoteController;
-use App\Http\Controllers\LikedQuoteController;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\LikedQuoteController;
 
 /*
 |--------------------------------------------------------------------------
-| Guest Routes
+| Home (Inertia SPA)
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/', function () {
+    $response = Http::get('https://zenquotes.io/api/quotes');
+
+    $quote = 'You are enough.';
+
+    if ($response->successful()) {
+        $quotes = $response->json();
+
+        if (is_array($quotes) && count($quotes) > 0) {
+            $random = collect($quotes)->random();
+            $quote = "{$random['q']} — {$random['a']}";
+        }
+    }
+
+    return Inertia::render('Home', [
+        'quote' => $quote,
+    ]);
+});
+/*
+|--------------------------------------------------------------------------
+| Authentication Actions (NO PAGES)
 |--------------------------------------------------------------------------
 */
 
 Route::middleware('guest')->group(function () {
-    Route::get('/login', [AuthController::class, 'create'])->name('login');
-    Route::post('/login', [AuthController::class, 'store']);
-
-    Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+    Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register']);
 });
 
-/*
-|--------------------------------------------------------------------------
-| Authenticated Routes
-|--------------------------------------------------------------------------
-*/
-
 Route::middleware('auth')->group(function () {
-    Route::post('/logout', [AuthController::class, 'destroy'])->name('logout');
-
-    Route::get('/home', [QuoteController::class, 'index']);
-
+    Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/like', [LikedQuoteController::class, 'store']);
     Route::delete('/like/{likedQuote}', [LikedQuoteController::class, 'destroy']);
 });

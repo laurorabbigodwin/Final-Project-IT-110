@@ -7,49 +7,51 @@ export default function Register() {
     password: "",
   });
 
-  const submit = (e) => {
+  const submit = e => {
     e.preventDefault();
     post("/register");
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <form onSubmit={submit} className="w-96 space-y-4">
-        <h1 className="text-xl font-semibold">Register</h1>
+    <form
+      onSubmit={submit}
+      className="bg-white shadow-md rounded-xl p-6 w-80"
+    >
+      <h2 className="text-center font-semibold mb-4">
+        Join inspirely
+      </h2>
 
-        <input
-          placeholder="Username"
-          className="w-full border p-2"
-          onChange={e => setData("username", e.target.value)}
-        />
+      <input
+        className="w-full border p-2 mb-3"
+        placeholder="Username"
+        onChange={e => setData("username", e.target.value)}
+      />
 
-        <input
-          type="email"
-          placeholder="Email"
-          className="w-full border p-2"
-          onChange={e => setData("email", e.target.value)}
-        />
+      <input
+        className="w-full border p-2 mb-3"
+        placeholder="Email"
+        onChange={e => setData("email", e.target.value)}
+      />
 
-        <input
-          type="password"
-          placeholder="Password"
-          className="w-full border p-2"
-          onChange={e => setData("password", e.target.value)}
-        />
+      <input
+        type="password"
+        className="w-full border p-2 mb-3"
+        placeholder="Password"
+        onChange={e => setData("password", e.target.value)}
+      />
 
-        {Object.values(errors).map((err, i) => (
-          <div key={i} className="text-red-500 text-sm">
-            {err}
-          </div>
-        ))}
+      {Object.values(errors).map((err, i) => (
+        <p key={i} className="text-red-400 text-sm">
+          {err}
+        </p>
+      ))}
 
-        <button
-          disabled={processing}
-          className="w-full bg-purple-500 text-white p-2"
-        >
-          Register
-        </button>
-      </form>
-    </div>
+      <button
+        disabled={processing}
+        className="w-full bg-purple-400 text-white py-2 rounded mt-3"
+      >
+        Sign Up
+      </button>
+    </form>
   );
 }

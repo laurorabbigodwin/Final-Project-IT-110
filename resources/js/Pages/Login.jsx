@@ -6,43 +6,43 @@ export default function Login() {
     password: "",
   });
 
-  const submit = (e) => {
+  const submit = e => {
     e.preventDefault();
     post("/login");
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <form onSubmit={submit} className="w-96 space-y-4">
-        <h1 className="text-xl font-semibold">Login</h1>
+    <form
+      onSubmit={submit}
+      className="bg-white shadow-md rounded-xl p-6 w-80"
+    >
+      <h2 className="text-center font-semibold mb-4">
+        Welcome Back
+      </h2>
 
-        <input
-          type="email"
-          placeholder="Email"
-          className="w-full border p-2"
-          onChange={e => setData("email", e.target.value)}
-        />
+      <input
+        className="w-full border p-2 mb-3"
+        placeholder="Email"
+        onChange={e => setData("email", e.target.value)}
+      />
 
-        <input
-          type="password"
-          placeholder="Password"
-          className="w-full border p-2"
-          onChange={e => setData("password", e.target.value)}
-        />
+      <input
+        type="password"
+        className="w-full border p-2 mb-3"
+        placeholder="Password"
+        onChange={e => setData("password", e.target.value)}
+      />
 
-        {errors.email && (
-          <div className="text-red-500 text-sm">
-            {errors.email}
-          </div>
-        )}
+      {errors.email && (
+        <p className="text-red-400 text-sm">{errors.email}</p>
+      )}
 
-        <button
-          disabled={processing}
-          className="w-full bg-purple-500 text-white p-2"
-        >
-          Login
-        </button>
-      </form>
-    </div>
+      <button
+        disabled={processing}
+        className="w-full bg-purple-400 text-white py-2 rounded mt-3"
+      >
+        Sign In
+      </button>
+    </form>
   );
 }
