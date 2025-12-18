@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,14 +13,14 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $validated = $request->validate([
-            'username' => 'required|string|max:255',
-            'email' => 'required|email|unique:users',
+            'username' => 'required|string|max:255|unique:users,username',
+            'email'    => 'required|email|unique:users,email',
             'password' => 'required|min:6',
         ]);
 
         $user = User::create([
-            'name' => $validated['username'],
-            'email' => $validated['email'],
+            'username' => $validated['username'],
+            'email'    => $validated['email'],
             'password' => Hash::make($validated['password']),
         ]);
 
@@ -31,16 +32,19 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'email' => 'required|email',
+            'username' => 'required|string',
             'password' => 'required',
         ]);
 
-        if (!Auth::attempt($credentials)) {
+        $user = User::where('username', $credentials['username'])->first();
+
+        if (!$user || !Hash::check($credentials['password'], $user->password)) {
             return back()->withErrors([
-                'email' => 'Invalid credentials',
+                'username' => 'Invalid credentials',
             ]);
         }
 
+        Auth::login($user);
         $request->session()->regenerate();
 
         return redirect('/');
@@ -49,6 +53,7 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         Auth::logout();
+
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
