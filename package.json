@@ -16,6 +16,7 @@
         "vite": "^7.0.7"
     },
     "dependencies": {
-        "@inertiajs/react": "^2.3.1"
+        "@inertiajs/react": "^2.3.1",
+        "framer-motion": "^12.23.26"
     }
 }
