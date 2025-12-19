@@ -11,30 +11,14 @@ use App\Http\Controllers\Api\LikedQuoteController;
 | Home (Inertia SPA)
 |--------------------------------------------------------------------------
 */
-Route::get('/', function () {
-    $response = Http::get('https://zenquotes.io/api/quotes');
-
-    $quote = 'You are enough.';
-
-    if ($response->successful()) {
-        $quotes = $response->json();
-
-        if (is_array($quotes) && count($quotes) > 0) {
-            $random = collect($quotes)->random();
-            $quote = "{$random['q']} — {$random['a']}";
-        }
-    }
-
+Route::get('/', function (App\Services\AffirmationService $service) {
     return Inertia::render('Home', [
-        'quote' => $quote,
-
-        // READ (all liked quotes)
+        'quote' => $service->getQuote(),
         'likedQuotes' => auth()->check()
             ? auth()->user()->likedQuotes()->latest()->get()
             : [],
     ]);
-});
-
+})
 /*
 |--------------------------------------------------------------------------
 | Authentication Actions (NO PAGES)
