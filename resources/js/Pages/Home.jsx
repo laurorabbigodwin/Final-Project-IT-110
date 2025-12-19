@@ -1,7 +1,7 @@
 import { useState, useRef } from "react"
 import { usePage, router, useForm } from "@inertiajs/react"
 import { motion } from "framer-motion"
-
+import StarryBackground from "@/Components/StarryBackground"
 // Images
 import Logo from "@/components/logo.png"
 import NameLogo from "@/components/namelogo.png"
@@ -14,7 +14,8 @@ import UserIcon from "@/components/user.png"
 import LockIcon from "@/components/padlock.png"
 import MailIcon from "@/components/mail.png"
 
-export default function Home({ quote, likedQuotes = [] }) {
+export default function Home({ quote, likedQuotes = [] }) {git remote set-url origin https://github.com/laurorabbigodwin/IT-110.git
+
   const { auth } = usePage().props
   const user = auth?.user
 
@@ -52,6 +53,15 @@ export default function Home({ quote, likedQuotes = [] }) {
     router.post("/like", { quote })
   }
 
+  <div
+  className="bg-[#FAF7F2] text-purple-700 overflow-x-hidden min-h-screen transition-all duration-500 relative"
+  style={{ minHeight: likedQuotes.length > 0 ? "140vh" : "100vh" }}
+>
+  {/* ADD THIS LINE */}
+  <StarryBackground />
+
+  {/* ================= HEADER ================= */}
+  <header className="flex justify-between items-center px-8 py-6 relative"></header>
   const removeLike = (id) => {
     router.delete(`/like/${id}`)
   }

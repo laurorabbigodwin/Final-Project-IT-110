@@ -13,7 +13,11 @@ class LikedQuoteController extends Controller
      */
     public function index()
     {
+        try{
         return auth()->user()->likedQuotes()->latest()->get();
+        }catch(\Exception $e){
+            return response()->json(['error' => 'Could not retrieve liked quotes. Please try again.'], 500);
+        }
     }
 
     /**
@@ -21,15 +25,17 @@ class LikedQuoteController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'quote' => 'required|string',
-        ]);
+        try{
+            $request->validate([
+                'quote' => 'required|string',
+            ]);
 
-        $likedQuote = auth()->user()->likedQuotes()->firstOrCreate([
-            'quote' => $request->quote,
-        ]);
-
-        return response()->json($likedQuote, 201);
+            auth()->user()->likedQuotes()->firstOrCreate([
+                'quote' => $request->quote,
+            ]);
+        }catch(\Exception $e){
+            return response()->json(['error' => 'Could not like the quote. Please try again.'], 500);
+        }
     }
 
     /**
@@ -37,9 +43,13 @@ class LikedQuoteController extends Controller
      */
     public function show(LikedQuote $likedQuote)
     {
+        try{
         abort_if($likedQuote->user_id !== auth()->id(), 403);
 
         return response()->json($likedQuote);
+        }catch(\Exception $e){
+            return response()->json(['error' => 'Could not retrieve the liked quote. Please try again.'], 500);
+        }
     }
 
     /**
@@ -47,17 +57,22 @@ class LikedQuoteController extends Controller
      */
     public function update(Request $request, LikedQuote $likedQuote)
     {
-        abort_if($likedQuote->user_id !== auth()->id(), 403);
+        try{
+            abort_if($likedQuote->user_id !== auth()->id(), 403);
 
-        $request->validate([
-            'quote' => 'required|string',
-        ]);
+            $request->validate([
+                'quote' => 'required|string',
+            ]);
 
-        $likedQuote->update([
-            'quote' => $request->quote,
-        ]);
+            $likedQuote->update([
+                'quote' => $request->quote,
+            ]);
 
-        return back()->with('success', 'Saved');
+            return back()->with('success', 'Saved');
+
+        }catch(\Exception $e){
+            return response()->json(['error' => 'Could not update the liked quote. Please try again.'], 500);
+        }
     }
 
 
@@ -66,10 +81,15 @@ class LikedQuoteController extends Controller
      */
     public function destroy(LikedQuote $likedQuote)
     {
-        abort_if($likedQuote->user_id !== auth()->id(), 403);
+        try{
+            abort_if($likedQuote->user_id !== auth()->id(), 403);
 
-        $likedQuote->delete();
+            $likedQuote->delete();
 
-        return response()->json(null, 204);
+            return redirect('/');
+
+        }catch(\Exception $e){
+            return response()->json(['error' => 'Could not unlike the quote. Please try again.'], 500);
+        }
     }
 }

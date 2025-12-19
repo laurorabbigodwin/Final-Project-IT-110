@@ -11,24 +11,9 @@ use App\Http\Controllers\Api\LikedQuoteController;
 | Home (Inertia SPA)
 |--------------------------------------------------------------------------
 */
-Route::get('/', function () {
-    $response = Http::get('https://zenquotes.io/api/quotes');
-
-    $quote = 'You are enough.';
-
-    if ($response->successful()) {
-        $quotes = $response->json();
-
-        if (is_array($quotes) && count($quotes) > 0) {
-            $random = collect($quotes)->random();
-            $quote = "{$random['q']} — {$random['a']}";
-        }
-    }
-
+Route::get('/', function (App\Services\AffirmationService $service) {
     return Inertia::render('Home', [
-        'quote' => $quote,
-
-        // ✅ Send liked quotes to frontend
+        'quote' => $service->getQuote(),
         'likedQuotes' => auth()->check()
             ? auth()->user()->likedQuotes()->latest()->get()
             : [],
@@ -48,7 +33,22 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
-    // ❤️ Like CRUD
+    /*
+    |--------------------------------------------------------------------------
+    | ❤️ Liked Quotes — FULL CRUD
+    |--------------------------------------------------------------------------
+    */
+
+    // READ
+    Route::get('/likes', [LikedQuoteController::class, 'index']);          // all
+    Route::get('/like/{likedQuote}', [LikedQuoteController::class, 'show']); // single
+
+    // CREATE
     Route::post('/like', [LikedQuoteController::class, 'store']);
+
+    // UPDATE
+    Route::put('/like/{likedQuote}', [LikedQuoteController::class, 'update']);
+
+    // DELETE
     Route::delete('/like/{likedQuote}', [LikedQuoteController::class, 'destroy']);
 });
